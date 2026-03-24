@@ -32,10 +32,12 @@ export default [
     },
     plugins: {
       "@typescript-eslint": tsPlugin,
+      "react-hooks": reactHooks,
     },
     rules: {
       ...js.configs.recommended.rules,
       ...tsPlugin.configs.recommended.rules,
+      ...reactHooks.configs.recommended.rules,
       "@typescript-eslint/no-unused-vars": [
         "warn",
         {
