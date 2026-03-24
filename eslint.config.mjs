@@ -35,6 +35,7 @@ export default [
     },
     rules: {
       ...js.configs.recommended.rules,
+      ...tsPlugin.configs.recommended.rules,
       "@typescript-eslint/no-unused-vars": [
         "warn",
         {
