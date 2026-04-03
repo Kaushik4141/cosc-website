@@ -17,6 +17,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+      deployments: write 
 
     steps:
       - name: Checkout code
@@ -32,6 +33,13 @@ jobs:
         run: npm ci --verbose
         timeout-minutes: 5
 
+      - name: Create GitHub Deployment
+        uses: chrnorm/deployment-action@v2
+        id: deployment
+        with:
+          token: '${{ github.token }}'
+          environment: ${{ github.event_name == 'pull_request' && 'preview' || 'production' }}
+
       - name: Pull Vercel Environment
         run: |
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
@@ -40,6 +48,7 @@ jobs:
             npx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
           fi
 
+      # --- STEP 3: BUILD PROJECT ---
       - name: Build Project Artifacts
         run: |
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
@@ -57,6 +66,24 @@ jobs:
             url=$(npx vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
           fi
           echo "DEPLOY_URL=$url" >> "$GITHUB_OUTPUT"
+      
+      - name: Update GitHub Deployment Status
+        if: success()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: '${{ github.token }}'
+          environment-url: ${{ steps.vercel_deploy.outputs.DEPLOY_URL }}
+          state: 'success'
+          description: 'Vercel Deployment is live!'
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+
+      - name: Update GitHub Deployment Failure
+        if: failure()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: '${{ github.token }}'
+          state: 'failure'
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
 
       - name: PR Comment
         if: github.event_name == 'pull_request'
