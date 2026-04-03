@@ -1,8 +1,6 @@
 name: Deploy to Vercel
 
 on:
-  push:
-    branches: [main, master]
   pull_request:
     branches: [main, master]
   workflow_dispatch:
@@ -42,7 +40,7 @@ jobs:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_PREVIEW }}
 
       - name: Build with Vercel (Production)
-        if: github.event_name == 'push'
+        if: github.event_name == 'workflow_dispatch'
         run: npx vercel build --prod --token=${{ secrets.VERCEL_TOKEN_PROD }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID_PROD }}
@@ -78,7 +76,7 @@ jobs:
             });
 
       - name: Deploy to Vercel (Production)
-        if: github.event_name == 'push'
+        if: github.event_name == 'workflow_dispatch'
         run: npx vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN_PROD }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID_PROD }}
