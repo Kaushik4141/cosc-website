@@ -2,6 +2,8 @@ import js from "@eslint/js";
 import tsParser from "@typescript-eslint/parser";
 import tsPlugin from "@typescript-eslint/eslint-plugin";
 import reactHooks from "eslint-plugin-react-hooks";
+import { fixupPluginRules } from "@eslint/compat";
+import globals from "globals";
 
 export default [
   {
@@ -28,12 +30,14 @@ export default [
         },
       },
       globals: {
+        ...globals.browser,
+        ...globals.node,
         React: "readonly",
       },
     },
     plugins: {
-      "@typescript-eslint": tsPlugin,
-      "react-hooks": reactHooks,
+      "@typescript-eslint": fixupPluginRules(tsPlugin),
+      "react-hooks": fixupPluginRules(reactHooks),
     },
     rules: {
       ...js.configs.recommended.rules,
