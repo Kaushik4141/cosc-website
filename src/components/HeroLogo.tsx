@@ -306,7 +306,20 @@ export default function HeroLogo() {
         </svg>
       </div>
 
-      {/* Text below */}
+      {/* Hero Text with Liquid Hover Expansion */}
+      <div className="flex flex-col items-center">
+        <h1
+          onMouseEnter={dtTextEnter}
+          onMouseLeave={dtTextLeave}
+          className="hero-text text-5xl sm:text-7xl font-bold tracking-tight text-zinc-900 dark:text-white select-none transition-all duration-300"
+          style={{ fontKerning: 'none' }}
+        >
+          COSC
+        </h1>
+        <p className="hero-subtitle mt-4 text-zinc-500 dark:text-zinc-400 font-medium tracking-[0.2em] uppercase text-xs sm:text-sm">
+          Computational Open Source Community
+        </p>
+      </div>
     </div>
   );
 }
